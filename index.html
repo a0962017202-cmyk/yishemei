@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>星联汇 - 社交媒体与海外业务自助下单</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#121212',
+                        cardbg: '#1e1e1e',
+                        inputbg: '#2a2a2a',
+                        accent: '#f97316'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- 引入 FontAwesome 图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-darkbg text-gray-200 font-sans antialiased pb-16">
+
+    <!-- 顶部导航栏 -->
+    <header class="bg-cardbg border-b border-gray-800 sticky top-0 z-40 px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <!-- 抽屉菜单按钮 -->
+            <button onclick="toggleSidebar()" class="text-gray-300 focus:outline-none text-lg">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <!-- Logo 与标题 -->
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-orange-500 to-yellow-500 flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                    星
+                </div>
+                <span class="font-bold text-lg tracking-wider text-white">星联汇社</span>
+            </div>
+        </div>
+
+        <!-- 右侧：余额与用户 -->
+        <div class="flex items-center space-x-3">
+            <div class="bg-emerald-950/80 border border-emerald-600/40 text-emerald-400 text-xs px-2.5 py-1 rounded-full font-semibold flex items-center space-x-1">
+                <span>¥0.00</span>
+            </div>
+            <div class="flex items-center space-x-1 text-sm text-gray-300 bg-inputbg px-2.5 py-1 rounded-full">
+                <span>大飞</span>
+                <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- 左侧抽屉菜单 (Sidebar) -->
+    <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 z-50 hidden transition-opacity"></div>
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-cardbg border-r border-gray-800 z-50 transform -translate-x-full transition-transform duration-300 flex flex-col">
+        <!-- 抽屉头部 -->
+        <div class="p-4 border-b border-gray-800 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-orange-500 to-yellow-500 flex items-center justify-center text-white font-bold text-sm">星</div>
+                <span class="font-bold text-white text-base">星联汇 · 社交媒体</span>
+            </div>
+            <button onclick="toggleSidebar()" class="text-gray-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        <!-- 菜单列表 -->
+        <div class="flex-1 overflow-y-auto py-4 space-y-1 px-3">
+            <a href="#" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl bg-orange-500/10 text-orange-400 font-medium">
+                <i class="fa-solid fa-cart-plus w-5"></i>
+                <span>新建订单</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-inputbg hover:text-white">
+                <i class="fa-solid fa-list-check w-5"></i>
+                <span>我的订单</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-inputbg hover:text-white">
+                <i class="fa-solid fa-wallet w-5"></i>
+                <span>账户充值</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-inputbg hover:text-white">
+                <i class="fa-solid fa-clock-rotate-left w-5"></i>
+                <span>交易记录</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-inputbg hover:text-white">
+                <i class="fa-solid fa-headset w-5"></i>
+                <span>工单支持</span>
+            </a>
+            <a href="https://t.me/你的客服用户名" target="_blank" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-blue-400 hover:bg-blue-500/10">
+                <i class="fa-brands fa-telegram w-5"></i>
+                <span>联系 Telegram 客服</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- 主体内容区 -->
+    <main class="max-w-xl mx-auto p-4 space-y-5">
+        
+        <!-- 页面标题 -->
+        <div class="flex items-center justify-between">
+            <h1 class="text-xl font-bold text-white tracking-wide">新建订单</h1>
+            <span class="text-xs text-gray-400 bg-inputbg px-2 py-1 rounded">稳定高效通道</span>
+        </div>
+
+        <!-- 业务分类宫格 -->
+        <div class="grid grid-cols-4 gap-2.5">
+            <!-- 全部 -->
+            <div onclick="selectCategory('all', this)" class="cat-card bg-orange-500/20 border border-orange-500/60 rounded-xl p-3 flex flex-col items-center justify-center space-y-2 cursor-pointer transition">
+                <i class="fa-solid fa-border-all text-orange-400 text-lg"></i>
+                <span class="text-xs text-gray-200 font-medium">全部</span>
+            </div>
+            <!-- Telegram 账号批发 -->
+            <div onclick="selectCategory('tg_acc', this)" class="cat-card bg-cardbg border border-gray-800 rounded-xl p-3 flex flex-col items-center justify-center space-y-2 cursor-pointer hover:border-gray-600 transition">
+                <i class="fa-brands fa-telegram text-sky-400 text-lg"></i>
+                <span class="text-xs text-gray-300 font-medium">TG账号</span>
+            </div>
+            <!-- Telegram 会员代充 -->
+            <div onclick="selectCategory('tg_vip', this)" class="cat-card bg-cardbg border border-gray-800 rounded-xl p-3 flex flex-col items-center justify-center space-y-2 cursor-pointer hover:border-gray-600 transition">
+                <i class="fa-solid fa-star text-purple-400 text-lg"></i>
+                <span class="text-xs text-gray-300 font-medium">TG会员</span>
+            </div>
+            <!-- 频道僵尸粉 -->
+            <div onclick="selectCategory('tg_sub', this)" class="cat-card bg-cardbg border border-gray-800 rounded-xl p-3 flex flex-col items-center justify-center space-y-2 cursor-pointer hover:border-gray-600 transition">
+                <i class="fa-solid fa-users text-blue-400 text-lg"></i>
+                <span class="text-xs text-gray-300 font-medium">频道僵尸粉</span>
+            </div>
+            <!-- 海外苹果 ID -->
+            <div onclick="selectCategory('apple_id', this)" class="cat-card bg-cardbg border border-gray-800 rounded-xl p-3 flex flex-col items-center justify-center space-y-2 cursor-pointer hover:border-gray-600 transition">
+                <i class="fa-brands fa-apple text-gray-200 text-lg"></i>
+                <span class="text-xs text-gray-300 font-medium">苹果ID</span>
+            </div>
+            <!-- 谷歌账号 -->
+            <div onclick="selectCategory('google_acc', this)" class="cat-card bg-cardbg border border-gray-800 rounded-xl p-3 flex flex-col items-center justify-center space-y-2 cursor-pointer hover:border-gray-600 transition">
+                <i class="fa-brands fa-google text-red-400 text-lg"></i>
+                <span class="text-xs text-gray-300 font-medium">谷歌账号</span>
+            </div>
+            <!-- Twitter/X -->
+            <div onclick="selectCategory('twitter', this)" class="cat-card bg-cardbg border border-gray-800 rounded-xl p-3 flex flex-col items-center justify-center space-y-2 cursor-pointer hover:border-gray-600 transition">
+                <i class="fa-brands fa-x-twitter text-gray-200 text-lg"></i>
+                <span class="text-xs text-gray-300 font-medium">X / Twitter</span>
+            </div>
+            <!-- 更多社媒 -->
+            <div onclick="selectCategory('other', this)" class="cat-card bg-cardbg border border-gray-800 rounded-xl p-3 flex flex-col items-center justify-center space-y-2 cursor-pointer hover:border-gray-600 transition">
+                <i class="fa-solid fa-globe text-emerald-400 text-lg"></i>
+                <span class="text-xs text-gray-300 font-medium">海外社媒</span>
+            </div>
+        </div>
+
+        <!-- 下单表单主体卡片 -->
+        <div class="bg-cardbg border border-gray-800 rounded-2xl p-4 space-y-4 shadow-xl">
+            
+            <!-- 搜索服务 -->
+            <div class="space-y-1.5">
+                <label class="text-xs font-semibold text-gray-400">搜索服务</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                    </span>
+                    <input type="text" placeholder="输入服务ID或名称搜索" class="w-full bg-inputbg border border-gray-700/60 rounded-xl pl-9 pr-3 py-2.5 text-sm text-white focus:outline-none focus:border-orange-500">
+                </div>
+            </div>
+
+            <!-- 分类选择 -->
+            <div class="space-y-1.5">
+                <label class="text-xs font-semibold text-gray-400">选择分类</label>
+                <select id="category-select" onchange="updateServices()" class="w-full bg-inputbg border border-gray-700/60 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-orange-500">
+                    <option value="tg_acc">【高权重】Telegram 协议/hash 账号批发</option>
+                    <option value="tg_vip">【官方直充】Telegram Premium 会员代充</option>
+                    <option value="tg_sub">【高性价比】Telegram 频道僵尸粉/协议粉</option>
+                    <option value="apple_id">【独享包售后】海外苹果 AppStore 已购/空白ID</option>
+                    <option value="google_acc">【稳定耐用】Gmail 谷歌老白号/带GV账号</option>
+                    <option value="other">【海外矩阵】Twitter/Ins/TikTok 账号与粉丝</option>
+                </select>
+            </div>
+
+            <!-- 具体服务项目 -->
+            <div class="space-y-1.5">
+                <label class="text-xs font-semibold text-gray-400">选择服务项目</label>
+                <select id="service-select" onchange="updatePrice()" class="w-full bg-inputbg border border-gray-700/60 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-orange-500">
+                    <!-- 动态生成 -->
+                </select>
+            </div>
+
+            <!-- 填写链接/账号参数 -->
+            <div class="space-y-1.5">
+                <label class="text-xs font-semibold text-gray-400" id="target-label">接收账号 / 链接 / 邮箱</label>
+                <input type="text" id="target-input" placeholder="请输入接收账号或联系邮箱" class="w-full bg-inputbg border border-gray-700/60 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-orange-500">
+                <p class="text-[11px] text-gray-500" id="target-tip">提示：虚拟商品自动发货，请务必填写正确的联系邮箱或接收账号。</p>
+            </div>
+
+            <!-- 购买数量 -->
+            <div class="space-y-1.5">
+                <label class="text-xs font-semibold text-gray-400">购买数量</label>
+                <input type="number" id="quantity" value="1" min="1" oninput="calculateTotal()" class="w-full bg-inputbg border border-gray-700/60 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-orange-500">
+            </div>
+
+            <!-- 价格展示与提交按钮 -->
+            <div class="pt-2 border-t border-gray-800 flex items-center justify-between">
+                <div>
+                    <span class="text-xs text-gray-400 block">需要支付</span>
+                    <span class="text-lg font-bold text-orange-400" id="total-price">¥ 5.00</span>
+                </div>
+                <button onclick="submitOrder()" class="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold px-6 py-2.5 rounded-xl text-sm shadow-lg shadow-orange-500/20 transition">
+                    立即提交订单
+                </button>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- 交互脚本 -->
+    <script>
+        const servicesData = {
+            'tg_acc': [
+                { id: 101, name: 'TG 协议老白号 (Tdata+Session) 稳定性极高', price: 5.00 },
+                { id: 102, name: 'TG 靓号/api 账号批发 (包首登)', price: 12.00 }
+            ],
+            'tg_vip': [
+                { id: 201, name: 'Telegram 会员代充 3个月 (官方直充)', price: 48.00 },
+                { id: 202, name: 'Telegram 会员代充 12个月 (超值年付)', price: 138.00 }
+            ],
+            'tg_sub': [
+                { id: 301, name: 'Telegram 频道僵尸粉/基础粉 (1000个)', price: 15.00 },
+                { id: 302, name: 'Telegram 频道真人互动/活跃粉 (1000个)', price: 45.00 }
+            ],
+            'apple_id': [
+                { id: 401, name: '美区苹果 Apple ID (已过安全验证/带密保)', price: 8.00 },
+                { id: 402, name: '港区/日区苹果 Apple ID 独享账号', price: 10.00 }
+            ],
+            'google_acc': [
+                { id: 501, name: 'Gmail 谷歌老白号 (手机注册/安全稳定)', price: 3.50 },
+                { id: 502, name: 'Gmail 带 Google Voice (GV) 虚拟号成品', price: 25.00 }
+            ],
+            'other': [
+                { id: 601, name: 'Twitter / X 活跃老号 (带头像+发推)', price: 6.00 },
+                { id: 602, name: 'TikTok 海外高权重账号 / 创作者账号', price: 18.00 }
+            ]
+        };
+
+        function updateServices() {
+            const cat = document.getElementById('category-select').value;
+            const serviceSelect = document.getElementById('service-select');
+            serviceSelect.innerHTML = '';
+            
+            const list = servicesData[cat] || servicesData['tg_acc'];
+            list.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item.price;
+                opt.textContent = `${item.name} - ¥${item.price.toFixed(2)}`;
+                serviceSelect.appendChild(opt);
+            });
+            updatePrice();
+        }
+
+        function updatePrice() {
+            const serviceSelect = document.getElementById('service-select');
+            const qty = document.getElementById('quantity').value || 1;
+            const unitPrice = parseFloat(serviceSelect.value) || 0;
+            const total = unitPrice * qty;
+            document.getElementById('total-price').textContent = `¥ ${total.toFixed(2)}`;
+        }
+
+        function calculateTotal() {
+            updatePrice();
+        }
+
+        function selectCategory(catKey, el) {
+            document.querySelectorAll('.cat-card').forEach(card => {
+                card.classList.remove('bg-orange-500/20', 'border-orange-500/60');
+                card.classList.add('bg-cardbg', 'border-gray-800');
+            });
+            el.classList.remove('bg-cardbg', 'border-gray-800');
+            el.classList.add('bg-orange-500/20', 'border-orange-500/60');
+
+            if(catKey !== 'all') {
+                document.getElementById('category-select').value = catKey;
+                updateServices();
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        function submitOrder() {
+            const target = document.getElementById('target-input').value;
+            if(!target) {
+                alert('请填写接收账号或联系方式！');
+                return;
+            }
+            const confirmGo = confirm('订单已生成！是否前往 Telegram 客服处发送订单并发起付款？');
+            if(confirmGo) {
+                // 请把下方链接换成你自己的 Telegram 客服用户名
+                window.location.href = 'https://t.me/你的客服用户名';
+            }
+        }
+
+        updateServices();
+    </script>
+</body>
+</html>
